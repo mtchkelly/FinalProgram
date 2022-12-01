@@ -12,7 +12,7 @@ public class LinkedBinaryTreeNode<E> implements BinaryTreeNode<E> {
     private E data;
     private BinaryTreeNode<E> left;
     private BinaryTreeNode<E> right;
-    private BinaryTreeNode<E> parent;
+    private BinaryTreeNode<E> root;
 
     public LinkedBinaryTreeNode() {
         this(null);
@@ -59,7 +59,7 @@ public class LinkedBinaryTreeNode<E> implements BinaryTreeNode<E> {
     }
 
     public boolean isParent() {
-        return left != null || right != null;
+        return !isLeaf();
     }
 
     public boolean isLeaf() {
