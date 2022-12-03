@@ -1,4 +1,7 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  *	Linked version of binary tree nodes.
@@ -12,7 +15,7 @@ public class LinkedBinaryTreeNode<E> implements BinaryTreeNode<E> {
     private E data;
     private BinaryTreeNode<E> left;
     private BinaryTreeNode<E> right;
-    private BinaryTreeNode<E> root;
+    private BinaryTreeNode<E> parent;
 
     public LinkedBinaryTreeNode() {
         this(null);
@@ -41,13 +44,19 @@ public class LinkedBinaryTreeNode<E> implements BinaryTreeNode<E> {
         return parent;
     }
 
+    public void setParent(BinaryTreeNode<E> parent) {
+        this.parent = parent;
+    }
+
     public BinaryTreeNode<E> getLeft() {
         return left;
     }
 
     public void setLeft(BinaryTreeNode<E> child) {
         left = child;
-
+        if (child != null) {
+            child.setParent(this);
+        }
     }
 
     public BinaryTreeNode<E> getRight() {
@@ -56,6 +65,9 @@ public class LinkedBinaryTreeNode<E> implements BinaryTreeNode<E> {
 
     public void setRight(BinaryTreeNode<E> child) {
         right = child;
+        if (child != null) {
+            child.setParent(this);
+        }
     }
 
     public boolean isParent() {
@@ -82,10 +94,33 @@ public class LinkedBinaryTreeNode<E> implements BinaryTreeNode<E> {
     }
 
     public int getHeight() {
-        if (getRoot() != this) {
-            return getRoot().getHeight();
+        if (getRoot() == this && isLeaf())
+            return 0;
+        return heightHelper(getRoot());
+    }
+
+    private int heightHelper(BinaryTreeNode<E> root) {
+        Queue<BinaryTreeNode<E>> nodes = new LinkedList<>();
+        nodes.add(root);
+        nodes.add(null);
+        int height = -1;
+        while (!nodes.isEmpty()) {
+            BinaryTreeNode<E> node = nodes.poll();
+            if (node == null) {
+                if (!nodes.isEmpty()) {
+                    nodes.add(null);
+                }
+                height++;
+            } else {
+                if (node.hasLeftChild()) {
+                    nodes.add(node.getLeft());
+                }
+                if (node.hasRightChild()) {
+                    nodes.add(node.getRight());
+                }
+            }
         }
-        return -1;
+        return height;
     }
 
     public int size() {
@@ -96,52 +131,72 @@ public class LinkedBinaryTreeNode<E> implements BinaryTreeNode<E> {
     }
 
     public void removeFromParent() {
-        try {
-            if (getParent().getLeft() == this) {
-                getParent().setLeft(null);
-            } else if (getParent().getRight() == this) {
-                getParent().setRight(null);
-            }
-        } catch (NullPointerException e) {
-            System.err.println("Does not have parent node");
+        if (getParent() == null) {
+            return;
         }
+        if (getParent().getLeft() == this) {
+            getParent().setLeft(null);
+        } else if (getParent().getRight() == this) {
+            getParent().setRight(null);
+        }
+        setParent(null);
     }
 
     public ArrayList<BinaryTreeNode<E>> pathTo(BinaryTreeNode<E> descendant) {
-        return null;
+        ArrayList<BinaryTreeNode<E>> path = new ArrayList<>();
+        BinaryTreeNode<E> cur = descendant;
+        while (cur != this) {
+            if (getRoot() == cur) {
+                return new ArrayList<>();
+            }
+            path.add(0, cur);
+            cur = cur.getParent();
+        }
+        path.add(0, cur);
+        return path;
     }
 
     public ArrayList<BinaryTreeNode<E>> pathFrom(BinaryTreeNode<E> ancestor) {
-        return null;
+        ArrayList<BinaryTreeNode<E>> path = new ArrayList<>();
+        BinaryTreeNode<E> cur = this;
+        while (cur != ancestor) {
+            if (getRoot() == cur) {
+                return new ArrayList<>();
+            }
+            path.add(cur);
+            cur = cur.getParent();
+        }
+        path.add(cur);
+        return path;
     }
 
     public void traversePreorder(Visitor visitor) {
         visitor.visit(this);
-        if (getLeft() != null) {
+        if (hasLeftChild()) {
             getLeft().traversePreorder(visitor);
         }
-        if (getRight() != null) {
+        if (hasRightChild()) {
             getRight().traversePreorder(visitor);
         }
     }
 
     public void traversePostorder(Visitor visitor) {
-        if (getLeft() != null) {
-            getLeft().traversePreorder(visitor);
+        if (hasLeftChild()) {
+            getLeft().traversePostorder(visitor);
         }
-        if (getRight() != null) {
-            getRight().traversePreorder(visitor);
+        if (hasRightChild()) {
+            getRight().traversePostorder(visitor);
         }
         visitor.visit(this);
     }
 
     public void traverseInorder(Visitor visitor) {
-        if (getLeft() != null) {
-            getLeft().traversePreorder(visitor);
+        if (hasLeftChild()) {
+            getLeft().traverseInorder(visitor);
         }
         visitor.visit(this);
-        if (getRight() != null) {
-            getRight().traversePreorder(visitor);
+        if (hasRightChild()) {
+            getRight().traverseInorder(visitor);
         }
     }
 }

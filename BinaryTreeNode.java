@@ -17,7 +17,7 @@ import java.util.ArrayList;
      */
     public void setData(E data);
 
-    /**
+   /**
     * Returns the ancestor of this node that has no parent,
     * or returns this node if it is the root.
     */
@@ -27,6 +27,11 @@ import java.util.ArrayList;
     * Returns the parent of this node, or null if this node is a root.
     */
    public BinaryTreeNode<E> getParent();
+
+   /**
+    * Sets the parent node of the current node.
+    */
+   public void setParent(BinaryTreeNode<E> parent);
 
    /**
      * Returns the left child of this node, or null if it does
