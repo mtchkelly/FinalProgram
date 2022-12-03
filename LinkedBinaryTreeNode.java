@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -198,5 +197,9 @@ public class LinkedBinaryTreeNode<E> implements BinaryTreeNode<E> {
         if (hasRightChild()) {
             getRight().traverseInorder(visitor);
         }
+    }
+
+    public String toString() {
+        return data.toString();
     }
 }

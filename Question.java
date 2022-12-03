@@ -6,5 +6,13 @@
  *	CS1122, Fall 2022
  */
 public class Question<E> extends LinkedBinaryTreeNode<E> {
+    public Question(E question, BinaryTreeNode<E> left, BinaryTreeNode<E> right) {
+        super(question);
+        setLeft(left);
+        setRight(right);
+    }
 
+    public String toString() {
+        return "Question - " + super.toString();
+    }
 }
