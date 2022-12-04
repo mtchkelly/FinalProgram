@@ -1,3 +1,8 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
 /**
  *	Contains main logic of program.
  *
@@ -7,22 +12,40 @@
  */
 public class GuessingGame implements Game {
 
-    private final String treeFile;
+    private Question<String> root;
 
     public GuessingGame(String filename) {
-        treeFile = filename;
+        loadTree(filename);
     }
 
     public BinaryTreeNode<String> loadTree(String filename) {
+        File treeFile = new File(filename);
+        Scanner input = null;
+        try {
+            input = new Scanner(treeFile);
+        } catch (FileNotFoundException ignored) {
+
+        }
+
+        while (input.hasNextLine()) {
+            String line = input.nextLine();
+        }
         return null;
     }
 
     public void saveTree(String filename) {
+        File treeFile = new File(filename);
+        PrintWriter output = null;
+        try {
+            output = new PrintWriter(treeFile);
+        } catch (FileNotFoundException ignored) {
+
+        }
 
     }
 
     public BinaryTreeNode<String> getRoot() {
-        return null;
+        return root;
     }
 
     public void play() {
@@ -30,7 +53,10 @@ public class GuessingGame implements Game {
     }
 
     public static void main(String[] args) {
-
+        GuessingGame game = new GuessingGame(args[0]);
+        do {
+            game.play();
+        } while ();
     }
 
 }
