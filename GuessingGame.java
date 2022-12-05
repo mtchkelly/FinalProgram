@@ -32,19 +32,25 @@ public class GuessingGame implements Game {
         while (input.hasNextLine()) {
             BinaryTreeNode<String> top = stack.peek();
             BinaryTreeNode<String> next = parseLine(input.nextLine());
-            if (!isValid(top)) {
-                if (top.hasRightChild()) {
-                    top.setLeft(next);
-                } else {
-                    top.setRight(next);
-                }
-                next.setParent(top);
+            while (isValid(top)) {
+                stack.pop();
+                top = stack.peek();
             }
-            stack.push(parseLine(input.nextLine()));
+            if (top.hasLeftChild()) {
+                top.setRight(next);
+            } else {
+                top.setLeft(next);
+            }
+            next.setParent(top);
+            stack.push(next);
         }
         return null;
     }
 
+    /*
+    Returns whether a Question node is complete, aka has two children nodes
+    Guess nodes always return true because they are always leaf nodes
+     */
     private boolean isValid(BinaryTreeNode<String> node) {
         if (node.getClass().getName().equals("Question")) {
             return node.hasLeftChild() && node.hasRightChild();
