@@ -23,9 +23,7 @@ public class GuessingGame implements Game {
         Scanner input = null;
         try {
             input = new Scanner(treeFile);
-        } catch (FileNotFoundException ignored) {
-
-        }
+        } catch (FileNotFoundException ignored) {}
 
         while (input.hasNextLine()) {
             String line = input.nextLine();
@@ -34,15 +32,27 @@ public class GuessingGame implements Game {
     }
 
     public void saveTree(String filename) {
-        File treeFile = new File(filename);
-        PrintWriter output = null;
-        try {
-            output = new PrintWriter(treeFile);
-        } catch (FileNotFoundException ignored) {
-
-        }
-
+        WriteFile visitor = new WriteFile(filename);
+        getRoot().traversePreorder(visitor);
     }
+
+    private record WriteFile(String fileName) implements BinaryTreeNode.Visitor {
+        public void visit(BinaryTreeNode node) {
+                File treeFile = new File(fileName);
+                PrintWriter output = null;
+                try {
+                    output = new PrintWriter(treeFile);
+                } catch (FileNotFoundException ignored) {}
+
+                if (node.isLeaf()) {
+                    output.print("G:");
+                } else if (node.isParent()){
+                    output.print("Q:");
+                }
+
+                output.println(node.getData());
+            }
+        }
 
     public BinaryTreeNode<String> getRoot() {
         return root;
@@ -54,9 +64,11 @@ public class GuessingGame implements Game {
 
     public static void main(String[] args) {
         GuessingGame game = new GuessingGame(args[0]);
+        Scanner sc = new Scanner(System.in);
         do {
             game.play();
-        } while ();
+            System.out.println("Shall we play a game?");
+        } while (sc.nextLine().equals("y"));
     }
 
 }
