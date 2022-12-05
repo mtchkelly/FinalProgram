@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Scanner;
+import java.util.Stack;
 
 /**
  *	Contains main logic of program.
@@ -25,15 +26,50 @@ public class GuessingGame implements Game {
             input = new Scanner(treeFile);
         } catch (FileNotFoundException ignored) {}
 
+        Stack<BinaryTreeNode<String>> stack = new Stack<>();
+        stack.push(parseLine(input.nextLine()));
+
         while (input.hasNextLine()) {
-            String line = input.nextLine();
+            BinaryTreeNode<String> top = stack.peek();
+            BinaryTreeNode<String> next = parseLine(input.nextLine());
+            if (!isValid(top)) {
+                if (top.hasRightChild()) {
+                    top.setLeft(next);
+                } else {
+                    top.setRight(next);
+                }
+                next.setParent(top);
+            }
+            stack.push(parseLine(input.nextLine()));
         }
         return null;
     }
 
+    private boolean isValid(BinaryTreeNode<String> node) {
+        if (node.getClass().getName().equals("Question")) {
+            return node.hasLeftChild() && node.hasRightChild();
+        }
+        return true;
+    }
+
+    /*
+    Creates a Guess or Question node from a line of text.
+     */
+    private BinaryTreeNode<String> parseLine(String line) {
+        BinaryTreeNode<String> node;
+        String data = line.substring(2);
+        if (line.startsWith("G")) {
+            node = new Guess<>(data);
+        }
+        else {
+            node = new Question<>(data, null, null);
+        }
+        return node;
+    }
+
     public void saveTree(String filename) {
-        WriteFile visitor = new WriteFile(filename);
-        getRoot().traversePreorder(visitor);
+        WriteFile save = new WriteFile(filename);
+        getRoot().traversePreorder(save);
     }
 
     private record WriteFile(String fileName) implements BinaryTreeNode.Visitor {
