@@ -13,12 +13,14 @@ import java.util.Stack;
  */
 public class GuessingGame implements Game {
     Scanner sc;
+    TreeDisplay treeDisplay;
 
     private LinkedBinaryTreeNode<String> root;
 
     public GuessingGame(String filename) {
         root = (LinkedBinaryTreeNode<String>) loadTree(filename);
         sc = new Scanner(System.in);
+        treeDisplay = new TreeDisplay(this);
     }
 
     public BinaryTreeNode<String> loadTree(String filename) {
@@ -108,54 +110,57 @@ public class GuessingGame implements Game {
     public void play() {
         BinaryTreeNode<String> cur = getRoot();
         while (!cur.isLeaf()) {
-            System.out.println(cur.getData() + " (y/n) ");
+            System.out.print(cur.getData() + " (y/n) ");
             if (sc.nextLine().equals("y")) {
                 cur = cur.getRight();
             } else {
                 cur = cur.getLeft();
             }
         }
-        if (makeGuess((Guess<String>) cur)) {
+        if (makeGuess(cur)) {
             System.out.println("I win!");
         } else {
             System.out.println("You win!");
-            insertGuess((Guess<String>) cur);
+            insertGuess(cur);
         }
     }
 
-    private boolean makeGuess(Guess<String> g) {
-        System.out.println("Are you thinking of a " + g.getData() + "? (y/n) ");
+    private boolean makeGuess(BinaryTreeNode<String> g) {
+        System.out.print("Are you thinking of a " + g.getData() + "? (y/n) ");
         return sc.nextLine().equals("y");
     }
 
-    private void insertGuess(Guess<String> g) {
-        Question<String> parent = (Question<String>) g.getParent();
-        System.out.println("What are you thinking of? ");
+    private void insertGuess(BinaryTreeNode<String> g) {
+        BinaryTreeNode<String> parent = g.getParent();
+        System.out.print("What are you thinking of? ");
         Guess<String> newGuess = new Guess<>(sc.nextLine());
         Question<String> newQuestion;
-        System.out.println("What question separates a " + g.getData() + " from a " + newGuess.getData() + "? ");
+        System.out.print("What question separates a " + g.getData() + " from a " + newGuess.getData() + "? ");
         String newQ = sc.nextLine();
-        System.out.println("Is " + newGuess.getData() + " correct when the answer to \"" + newQ + "\" is yes? (y/n) ");
+        System.out.print("Is " + newGuess.getData() + " correct when the answer to \"" + newQ + "\" is yes? (y/n) ");
         if (sc.nextLine().equals("y")) {
             newQuestion = new Question<>(newQ, g, newGuess);
         } else {
             newQuestion = new Question<>(newQ, newGuess, g);
         }
-        newQuestion.setParent(g.getParent());
-        if (g.getParent().getRight() == g) {
-            g.getParent().setRight(newQuestion);
+        newQuestion.setParent(parent);
+        if (parent.getRight() == g) {
+            System.out.println("parent right set");
+            parent.setRight(newQuestion);
         } else {
-            g.getParent().setLeft(newQuestion);
+            System.out.println("`parent left set`");
+            parent.setLeft(newQuestion);
         }
     }
 
     public static void main(String[] args) {
         GuessingGame game = new GuessingGame(args[0]);
         Scanner sc = new Scanner(System.in);
-        System.out.println("Shall we play a game? (y/n) ");
+        System.out.print("Shall we play a game? (y/n) ");
         while (sc.nextLine().equals("y")) {
             game.play();
-            System.out.println("Shall we play a game? (y/n) ");
+            game.treeDisplay.initTreeDisplay();
+            System.out.print("Shall we play a game? (y/n) ");
         }
         System.out.println("\nSaving tree data...");
         System.out.println("Enter file name (with .data): ");
