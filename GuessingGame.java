@@ -13,10 +13,10 @@ import java.util.Stack;
  */
 public class GuessingGame implements Game {
 
-    private Question<String> root;
+    private final LinkedBinaryTreeNode<String> root;
 
     public GuessingGame(String filename) {
-        loadTree(filename);
+        root = (LinkedBinaryTreeNode<String>) loadTree(filename);
     }
 
     public BinaryTreeNode<String> loadTree(String filename) {
@@ -44,7 +44,7 @@ public class GuessingGame implements Game {
             next.setParent(top);
             stack.push(next);
         }
-        return null;
+        return stack.firstElement();
     }
 
     /*
@@ -100,16 +100,32 @@ public class GuessingGame implements Game {
         return root;
     }
 
+
     public void play() {
 
     }
+
+    private void insertGuessNo(Guess<String> g, Question<String> q) {
+
+    }
+    private void insertGuessYes(Guess<String> g, Question<String> q) {
+
+    }
+
+    private void printGuess(Guess<String> g) {
+        System.out.println("Are you thinking of a " + g.getData() + "? (y/n) ");
+    }
+    private void printQuestion(Question<String> q) {
+        System.out.println(q.getData() + " (y/n) ");
+    }
+
 
     public static void main(String[] args) {
         GuessingGame game = new GuessingGame(args[0]);
         Scanner sc = new Scanner(System.in);
         do {
             game.play();
-            System.out.println("Shall we play a game?");
+            System.out.println("Shall we play a game? y / n");
         } while (sc.nextLine().equals("y"));
     }
 
