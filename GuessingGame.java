@@ -83,17 +83,17 @@ public class GuessingGame implements Game {
         save.output.close();
     }
 
-    private class WriteFile implements BinaryTreeNode.Visitor {
+    private static class WriteFile implements BinaryTreeNode.Visitor {
         PrintWriter output;
         public WriteFile(String fileName) {
-
             try {
                 output = new PrintWriter(fileName);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (FileNotFoundException ignored) {}
         }
         public void visit(BinaryTreeNode node) {
+            if (node == null) {
+                return;
+            }
             if (node.isLeaf()) {
                 output.print("G:");
             } else if (node.isParent()) {
@@ -143,12 +143,13 @@ public class GuessingGame implements Game {
         } else {
             newQuestion = new Question<>(newQ, newGuess, g);
         }
+        if (g == g.getRoot()) {
+            root = newQuestion;
+        }
         newQuestion.setParent(parent);
         if (parent.getRight() == g) {
-            System.out.println("parent right set");
             parent.setRight(newQuestion);
         } else {
-            System.out.println("`parent left set`");
             parent.setLeft(newQuestion);
         }
     }
@@ -165,6 +166,7 @@ public class GuessingGame implements Game {
         System.out.println("\nSaving tree data...");
         System.out.println("Enter file name (with .data): ");
         game.saveTree(sc.nextLine());
+        System.exit(0);
     }
 
 }
