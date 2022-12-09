@@ -78,6 +78,9 @@ public class GuessingGame implements Game {
     }
 
     public void saveTree(String filename) {
+        if (getRoot() == null) {
+            return;
+        }
         WriteFile save = new WriteFile(filename);
         getRoot().traversePreorder(save);
         save.output.close();
@@ -157,15 +160,19 @@ public class GuessingGame implements Game {
     public static void main(String[] args) {
         GuessingGame game = new GuessingGame(args[0]);
         Scanner sc = new Scanner(System.in);
+        System.out.println("Welcome to the Guessing Game!");
         System.out.print("Shall we play a game? (y/n) ");
         while (sc.nextLine().equals("y")) {
             game.play();
             game.treeDisplay.initTreeDisplay();
             System.out.print("Shall we play a game? (y/n) ");
         }
+        /*
         System.out.println("\nSaving tree data...");
         System.out.println("Enter file name (with .data): ");
         game.saveTree(sc.nextLine());
+         */
+        game.saveTree("tree.data");
         System.exit(0);
     }
 
