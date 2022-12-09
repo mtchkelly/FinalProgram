@@ -1,9 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.sql.SQLOutput;
 import java.util.Scanner;
-import java.util.SimpleTimeZone;
 import java.util.Stack;
 
 /**
@@ -14,11 +12,13 @@ import java.util.Stack;
  *	CS1122, Fall 2022
  */
 public class GuessingGame implements Game {
+    Scanner sc;
 
     private LinkedBinaryTreeNode<String> root;
 
     public GuessingGame(String filename) {
         root = (LinkedBinaryTreeNode<String>) loadTree(filename);
+        sc = new Scanner(System.in);
     }
 
     public BinaryTreeNode<String> loadTree(String filename) {
@@ -78,23 +78,25 @@ public class GuessingGame implements Game {
     public void saveTree(String filename) {
         WriteFile save = new WriteFile(filename);
         getRoot().traversePreorder(save);
+        save.output.close();
     }
 
-    private record WriteFile(String fileName) implements BinaryTreeNode.Visitor {
-        public void visit(BinaryTreeNode node) {
-            File treeFile = new File(fileName);
-            PrintWriter output = null;
-            try {
-                output = new PrintWriter(treeFile);
-            } catch (FileNotFoundException ignored) {
-            }
+    private class WriteFile implements BinaryTreeNode.Visitor {
+        PrintWriter output;
+        public WriteFile(String fileName) {
 
+            try {
+                output = new PrintWriter(fileName);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        public void visit(BinaryTreeNode node) {
             if (node.isLeaf()) {
                 output.print("G:");
             } else if (node.isParent()) {
                 output.print("Q:");
             }
-
             output.println(node.getData());
         }
     }
@@ -104,7 +106,6 @@ public class GuessingGame implements Game {
     }
 
     public void play() {
-        Scanner sc = new Scanner(System.in);
         BinaryTreeNode<String> cur = getRoot();
         while (!cur.isLeaf()) {
             System.out.println(cur.getData() + " (y/n) ");
@@ -123,14 +124,12 @@ public class GuessingGame implements Game {
     }
 
     private boolean makeGuess(Guess<String> g) {
-        Scanner sc = new Scanner(System.in);
         System.out.println("Are you thinking of a " + g.getData() + "? (y/n) ");
         return sc.nextLine().equals("y");
     }
 
     private void insertGuess(Guess<String> g) {
         Question<String> parent = (Question<String>) g.getParent();
-        Scanner sc = new Scanner(System.in);
         System.out.println("What are you thinking of? ");
         Guess<String> newGuess = new Guess<>(sc.nextLine());
         Question<String> newQuestion;
