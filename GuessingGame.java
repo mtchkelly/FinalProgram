@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.sql.SQLOutput;
 import java.util.Scanner;
+import java.util.SimpleTimeZone;
 import java.util.Stack;
 
 /**
@@ -14,10 +15,10 @@ import java.util.Stack;
  */
 public class GuessingGame implements Game {
 
-    private Question<String> root;
+    private LinkedBinaryTreeNode<String> root;
 
     public GuessingGame(String filename) {
-        loadTree(filename);
+        root = (LinkedBinaryTreeNode<String>) loadTree(filename);
     }
 
     public BinaryTreeNode<String> loadTree(String filename) {
@@ -46,7 +47,7 @@ public class GuessingGame implements Game {
             next.setParent(top);
             stack.push(next);
         }
-        return null;
+        return stack.firstElement();
     }
 
     /*
@@ -103,44 +104,63 @@ public class GuessingGame implements Game {
     }
 
     public void play() {
-        System.out.println("insert tree name");
         Scanner sc = new Scanner(System.in);
-        WriteFile fileWrote = new WriteFile(sc.nextLine());
-        Scanner treeList = new Scanner(fileWrote.toString());
-        int size = fileWrote.fileName.length();
-        for (int x = 0; x < size; x++) {
-            String lastAnimal;
-            String nextQ = treeList.nextLine();
-            if (nextQ.substring(0, 2).equals("Q:")) {
-                System.out.println(nextQ + " (y/n)");
-                if (sc.nextLine().equals("y")) {
-                }
-                else if (nextQ.equals("null")) {
-                    break;
-                }
+        BinaryTreeNode<String> cur = getRoot();
+        while (!cur.isLeaf()) {
+            System.out.println(cur.getData() + " (y/n) ");
+            if (sc.nextLine().equals("y")) {
+                cur = cur.getRight();
+            } else {
+                cur = cur.getLeft();
             }
-            else{
-                lastAnimal = nextQ;
-                if(nextQ.equals(sc.next()) && treeList.hasNext() == false){
-                    System.out.println("You win!");
-                    System.out.println("What were you thinking off?");
-                    String win = sc.next();
-                    System.out.println(win);
-                    System.out.println("What seperates a " + win + "from a " + lastAnimal + "?");
-
-                }
-            }
+        }
+        if (makeGuess((Guess<String>) cur)) {
+            System.out.println("I win!");
+        } else {
+            System.out.println("You win!");
+            insertGuess((Guess<String>) cur);
         }
     }
 
+    private boolean makeGuess(Guess<String> g) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Are you thinking of a " + g.getData() + "? (y/n) ");
+        return sc.nextLine().equals("y");
+    }
+
+    private void insertGuess(Guess<String> g) {
+        Question<String> parent = (Question<String>) g.getParent();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("What are you thinking of? ");
+        Guess<String> newGuess = new Guess<>(sc.nextLine());
+        Question<String> newQuestion;
+        System.out.println("What question separates a " + g.getData() + " from a " + newGuess.getData() + "? ");
+        String newQ = sc.nextLine();
+        System.out.println("Is " + newGuess.getData() + " correct when the answer to \"" + newQ + "\" is yes? (y/n) ");
+        if (sc.nextLine().equals("y")) {
+            newQuestion = new Question<>(newQ, g, newGuess);
+        } else {
+            newQuestion = new Question<>(newQ, newGuess, g);
+        }
+        newQuestion.setParent(g.getParent());
+        if (g.getParent().getRight() == g) {
+            g.getParent().setRight(newQuestion);
+        } else {
+            g.getParent().setLeft(newQuestion);
+        }
+    }
 
     public static void main(String[] args) {
         GuessingGame game = new GuessingGame(args[0]);
         Scanner sc = new Scanner(System.in);
-        do {
+        System.out.println("Shall we play a game? (y/n) ");
+        while (sc.nextLine().equals("y")) {
             game.play();
-            System.out.println("Shall we play a game?");
-        } while (sc.nextLine().equals("y"));
+            System.out.println("Shall we play a game? (y/n) ");
+        }
+        System.out.println("\nSaving tree data...");
+        System.out.println("Enter file name (with .data): ");
+        game.saveTree(sc.nextLine());
     }
 
 }
