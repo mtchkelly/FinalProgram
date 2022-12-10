@@ -1,0 +1,67 @@
+Q:Are you thinking of a person?
+Q:Is it alive?
+Q:Is it Edible?
+Q:Can you drink from it?
+Q:Can you ride in it?
+Q:Eat at it?
+Q:Can you wear it?
+G:Engineering
+G:Shoes
+G:Applebees
+G:Ferrari
+Q:Is it made of metal?
+G:Glass
+G:Goblet
+Q:Is it liquid
+Q:Is it a meat?
+G:Baugette
+Q:Does it come from a cow?
+Q:Is it from a chicken
+Q:Is it domestically raised meat?
+G:Bison
+G:Pork
+G:Chicken Wings
+G:Steak
+G:Can of pop
+Q:Is it a mammal?
+Q:Is it a plant?
+Q:Scales
+G:Fish
+Q:Is it smaller than an arm?
+G:Alligator
+G:Lizard
+G:Rose
+Q:Does it go moo?
+Q:Is it a domestic animal?
+G:Buffalo
+Q:Is it a descendant of wolves
+G:Dog
+G:Cat
+G:Cow
+Q:Is the person alive?
+Q:Was the person a woman?
+Q:Was he an actor?
+Q:Was he a musician?
+Q:Did he get shot?
+G:Albert Einstein
+G:John F Kennedy
+Q:Was he a jazz player?
+G:Jerry Garcia
+G:Dizzy Gillespie
+G:Charlie Chaplin
+G:Grace Hopper
+Q:Is the person a woman?
+Q:Is it an MTU student?
+G:Matthew Broderick
+G:Mitchell
+Q:Is she an actress?
+Q:Is she a politician?
+Q:Is she a scientist?
+G:Maya Angelou
+Q:Younger than 25?
+G:Dedre Gentner
+G:Tiera Guinn
+Q:Did she run against Donald Trump?
+G:Angela Merkel
+G:Hillary Clinton
+G:Judi Dench
